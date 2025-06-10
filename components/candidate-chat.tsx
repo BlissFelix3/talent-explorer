@@ -25,6 +25,7 @@ interface CandidateChatProps {
     avatar: string
     skills: string[]
     experience: string
+    bio?: string
   }
 }
 
@@ -42,10 +43,11 @@ export function CandidateChat({ candidate }: CandidateChatProps) {
 
   // Add initial greeting message
   useEffect(() => {
+    const bio = candidate.bio ? ` ${candidate.bio.slice(0, 100)}...` : ""
     const initialMessage = {
       id: "initial",
       role: "assistant" as const,
-      content: `Hi there! I'm ${candidate.name}, a ${candidate.headline}. How can I help you today?`,
+      content: `Hi there! I'm ${candidate.name}, a ${candidate.headline}.${bio} How can I help you today?`,
       timestamp: new Date(),
     }
     setMessages([initialMessage])

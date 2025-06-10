@@ -1,96 +1,5 @@
 import type { Candidate } from "@/lib/stores/shortlist-store"
-
-// Mock candidate data
-const mockCandidates: Candidate[] = [
-  {
-    id: "1",
-    name: "Sarah Chen",
-    headline: "Senior Full Stack Developer",
-    avatar: "/placeholder.svg?height=80&width=80",
-    skills: ["React", "Node.js", "TypeScript", "Python", "AWS"],
-    strengths: ["Problem Solving", "Leadership", "Communication", "Innovation"],
-    compensation: { min: 120000, max: 150000, currency: "USD" },
-    location: "San Francisco, CA",
-    experience: "8 years",
-  },
-  {
-    id: "2",
-    name: "Marcus Johnson",
-    headline: "DevOps Engineer & Cloud Architect",
-    avatar: "/placeholder.svg?height=80&width=80",
-    skills: ["Kubernetes", "Docker", "Terraform", "AWS", "CI/CD"],
-    strengths: ["System Design", "Automation", "Scalability", "Mentoring"],
-    compensation: { min: 130000, max: 160000, currency: "USD" },
-    location: "Austin, TX",
-    experience: "10 years",
-  },
-  {
-    id: "3",
-    name: "Elena Rodriguez",
-    headline: "Product Designer & UX Researcher",
-    avatar: "/placeholder.svg?height=80&width=80",
-    skills: ["Figma", "User Research", "Prototyping", "Design Systems", "A/B Testing"],
-    strengths: ["Empathy", "Creativity", "Data-Driven", "Collaboration"],
-    compensation: { min: 110000, max: 140000, currency: "USD" },
-    location: "New York, NY",
-    experience: "6 years",
-  },
-  {
-    id: "4",
-    name: "David Kim",
-    headline: "Machine Learning Engineer",
-    avatar: "/placeholder.svg?height=80&width=80",
-    skills: ["Python", "TensorFlow", "PyTorch", "MLOps", "Statistics"],
-    strengths: ["Analytical Thinking", "Research", "Innovation", "Teaching"],
-    compensation: { min: 140000, max: 180000, currency: "USD" },
-    location: "Seattle, WA",
-    experience: "7 years",
-  },
-  {
-    id: "5",
-    name: "Priya Patel",
-    headline: "Frontend Developer & Design Systems Lead",
-    avatar: "/placeholder.svg?height=80&width=80",
-    skills: ["React", "Vue.js", "CSS", "JavaScript", "Storybook"],
-    strengths: ["Attention to Detail", "Component Architecture", "Performance", "Accessibility"],
-    compensation: { min: 100000, max: 130000, currency: "USD" },
-    location: "Remote",
-    experience: "5 years",
-  },
-  {
-    id: "6",
-    name: "James Wilson",
-    headline: "Backend Engineer & API Specialist",
-    avatar: "/placeholder.svg?height=80&width=80",
-    skills: ["Node.js", "GraphQL", "MongoDB", "Express", "REST APIs"],
-    strengths: ["System Architecture", "Performance Optimization", "Documentation", "Mentoring"],
-    compensation: { min: 115000, max: 145000, currency: "USD" },
-    location: "Boston, MA",
-    experience: "6 years",
-  },
-  {
-    id: "7",
-    name: "Sophia Lee",
-    headline: "Data Scientist & ML Specialist",
-    avatar: "/placeholder.svg?height=80&width=80",
-    skills: ["Python", "R", "SQL", "TensorFlow", "Data Visualization"],
-    strengths: ["Statistical Analysis", "Problem Solving", "Communication", "Research"],
-    compensation: { min: 125000, max: 155000, currency: "USD" },
-    location: "Chicago, IL",
-    experience: "4 years",
-  },
-  {
-    id: "8",
-    name: "Michael Brown",
-    headline: "Senior Software Engineer",
-    avatar: "/placeholder.svg?height=80&width=80",
-    skills: ["Java", "Spring Boot", "Microservices", "AWS", "Docker"],
-    strengths: ["System Design", "Mentoring", "Problem Solving", "Leadership"],
-    compensation: { min: 135000, max: 165000, currency: "USD" },
-    location: "Austin, TX",
-    experience: "9 years",
-  },
-]
+import { searchPeople, getProfile, type SearchResponse, type ProfileResponse } from "./torre"
 
 interface FilterOptions {
   location?: string
@@ -99,79 +8,281 @@ interface FilterOptions {
   skills?: string[]
 }
 
+// Transform Torre search result to our Candidate interface
+function transformTorreSearchResult(torreResult: SearchResponse["results"][0]): Candidate {
+  // Extract years of experience from professional headline or default to random
+  const experienceMatch = torreResult.professionalHeadline?.match(/(\d+)\+?\s*years?/i)
+  const experienceYears = experienceMatch ? Number.parseInt(experienceMatch[1]) : Math.floor(Math.random() * 10) + 2
+
+  // Generate skills from professional headline or use defaults
+  const skills = extractSkillsFromHeadline(torreResult.professionalHeadline || "")
+
+  // Generate compensation based on experience and role
+  const baseCompensation = calculateCompensation(torreResult.professionalHeadline || "", experienceYears)
+
+  return {
+    id: torreResult.ggId,
+    name: torreResult.name,
+    headline: torreResult.professionalHeadline || "Professional",
+    avatar: torreResult.picture || torreResult.pictureThumbnail || "/placeholder.svg?height=80&width=80",
+    skills: skills,
+    strengths: generateStrengths(skills),
+    compensation: baseCompensation,
+    location: torreResult.location?.name || "Remote",
+    experience: `${experienceYears} years`,
+    username: torreResult.username,
+    publicId: torreResult.publicId,
+    verified: torreResult.verified,
+  }
+}
+
+// Transform Torre profile to our Candidate interface
+function transformTorreProfile(torreProfile: ProfileResponse): Candidate {
+  const experienceYears = calculateExperienceYears(torreProfile.experiences)
+  const skills = torreProfile.strengths.slice(0, 8).map((s) => s.name)
+  const strengths = torreProfile.strengths
+    .filter((s) => s.proficiency === "expert" || s.proficiency === "proficient")
+    .slice(0, 4)
+    .map((s) => s.name)
+
+  const compensation = calculateCompensationFromProfile(torreProfile)
+
+  return {
+    id: torreProfile.person.ggId,
+    name: torreProfile.person.name,
+    headline: torreProfile.person.professionalHeadline || "Professional",
+    avatar: torreProfile.person.picture || "/placeholder.svg?height=80&width=80",
+    skills: skills,
+    strengths: strengths.length > 0 ? strengths : generateStrengths(skills),
+    compensation: compensation,
+    location: torreProfile.person.location?.name || "Remote",
+    experience: `${experienceYears} years`,
+    username: torreProfile.person.ggId, // Use ggId as username fallback
+    publicId: torreProfile.person.ggId,
+    completion: torreProfile.person.completion,
+    verified: torreProfile.person.verified,
+    links: torreProfile.person.links,
+    languages: torreProfile.languages,
+    torreData: torreProfile,
+  }
+}
+
+function extractSkillsFromHeadline(headline: string): string[] {
+  const commonSkills = [
+    "React",
+    "JavaScript",
+    "TypeScript",
+    "Python",
+    "Java",
+    "Node.js",
+    "AWS",
+    "Docker",
+    "Kubernetes",
+    "SQL",
+    "MongoDB",
+    "GraphQL",
+    "Vue.js",
+    "Angular",
+    "Go",
+    "Rust",
+    "PostgreSQL",
+    "Redis",
+    "Microservices",
+    "DevOps",
+    "CI/CD",
+    "Terraform",
+    "Machine Learning",
+    "Data Science",
+    "UI/UX",
+    "Figma",
+    "Product Management",
+  ]
+
+  const foundSkills = commonSkills.filter((skill) => headline.toLowerCase().includes(skill.toLowerCase()))
+
+  if (foundSkills.length === 0) {
+    if (headline.toLowerCase().includes("frontend") || headline.toLowerCase().includes("ui")) {
+      return ["React", "JavaScript", "CSS", "HTML"]
+    } else if (headline.toLowerCase().includes("backend") || headline.toLowerCase().includes("api")) {
+      return ["Node.js", "Python", "SQL", "REST APIs"]
+    } else if (headline.toLowerCase().includes("full stack")) {
+      return ["React", "Node.js", "JavaScript", "SQL"]
+    } else if (headline.toLowerCase().includes("devops")) {
+      return ["Docker", "Kubernetes", "AWS", "CI/CD"]
+    } else if (headline.toLowerCase().includes("data")) {
+      return ["Python", "SQL", "Machine Learning", "Data Science"]
+    } else if (headline.toLowerCase().includes("design")) {
+      return ["Figma", "UI/UX", "Prototyping", "User Research"]
+    }
+    return ["JavaScript", "Python", "SQL"]
+  }
+
+  return foundSkills.slice(0, 6)
+}
+
+function generateStrengths(skills: string[]): string[] {
+  const allStrengths = [
+    "Problem Solving",
+    "Leadership",
+    "Communication",
+    "Innovation",
+    "Teamwork",
+    "Analytical Thinking",
+    "Creativity",
+    "Adaptability",
+    "Mentoring",
+    "Strategic Thinking",
+    "Attention to Detail",
+    "Time Management",
+    "Critical Thinking",
+    "Collaboration",
+  ]
+
+  return allStrengths.sort(() => 0.5 - Math.random()).slice(0, 4)
+}
+
+function calculateCompensation(
+  headline: string,
+  experienceYears: number,
+): { min: number; max: number; currency: string } {
+  let baseMin = 60000
+  let baseMax = 80000
+
+  if (headline.toLowerCase().includes("senior") || headline.toLowerCase().includes("lead")) {
+    baseMin = 100000
+    baseMax = 140000
+  } else if (headline.toLowerCase().includes("principal") || headline.toLowerCase().includes("architect")) {
+    baseMin = 140000
+    baseMax = 180000
+  } else if (headline.toLowerCase().includes("manager") || headline.toLowerCase().includes("director")) {
+    baseMin = 120000
+    baseMax = 160000
+  }
+
+  if (headline.toLowerCase().includes("machine learning") || headline.toLowerCase().includes("ai")) {
+    baseMin += 20000
+    baseMax += 30000
+  } else if (headline.toLowerCase().includes("devops") || headline.toLowerCase().includes("cloud")) {
+    baseMin += 15000
+    baseMax += 25000
+  }
+
+  const experienceMultiplier = Math.min(experienceYears * 0.1, 0.5)
+  baseMin += baseMin * experienceMultiplier
+  baseMax += baseMax * experienceMultiplier
+
+  return {
+    min: Math.round(baseMin),
+    max: Math.round(baseMax),
+    currency: "USD",
+  }
+}
+
+function calculateExperienceYears(experiences: ProfileResponse["experiences"]): number {
+  if (!experiences || experiences.length === 0) return 2
+
+  let totalYears = 0
+  for (const exp of experiences) {
+    if (exp.fromYear && exp.toYear) {
+      totalYears += Number.parseInt(exp.toYear) - Number.parseInt(exp.fromYear)
+    } else if (exp.fromYear) {
+      totalYears += new Date().getFullYear() - Number.parseInt(exp.fromYear)
+    }
+  }
+
+  return Math.max(totalYears, 1)
+}
+
+function calculateCompensationFromProfile(profile: ProfileResponse): {
+  min: number
+  max: number
+  currency: string
+} {
+  const experienceYears = calculateExperienceYears(profile.experiences)
+  const headline = profile.person.professionalHeadline || ""
+  const completionBonus = profile.person.completion * 0.2
+
+  const baseCompensation = calculateCompensation(headline, experienceYears)
+
+  return {
+    min: Math.round(baseCompensation.min * (1 + completionBonus)),
+    max: Math.round(baseCompensation.max * (1 + completionBonus)),
+    currency: "USD",
+  }
+}
+
 export const candidatesApi = {
   search: async (
     query: string,
     page = 1,
     filters: FilterOptions = {},
   ): Promise<{ candidates: Candidate[]; hasMore: boolean }> => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 800))
+    try {
+      const pageSize = 10
+      const searchRequest = {
+        query: query || "developer",
+        limit: pageSize,
+        filters: {
+          location: filters.location,
+          skills: filters.skills,
+          remote: filters.location === "Remote",
+        },
+      }
 
-    // Apply search query
-    let filtered = query
-      ? mockCandidates.filter(
-          (candidate) =>
-            candidate.name.toLowerCase().includes(query.toLowerCase()) ||
-            candidate.headline.toLowerCase().includes(query.toLowerCase()) ||
-            candidate.skills.some((skill) => skill.toLowerCase().includes(query.toLowerCase())),
+      const response = await searchPeople(searchRequest)
+      const candidates = response.results.map(transformTorreSearchResult)
+
+      // Apply additional client-side filters
+      let filteredCandidates = candidates
+
+      if (filters.experience) {
+        filteredCandidates = filteredCandidates.filter((candidate) => {
+          const years = Number.parseInt(candidate.experience.split(" ")[0])
+          switch (filters.experience) {
+            case "0-2 years":
+              return years <= 2
+            case "3-5 years":
+              return years >= 3 && years <= 5
+            case "6-8 years":
+              return years >= 6 && years <= 8
+            case "8+ years":
+              return years >= 8
+            default:
+              return true
+          }
+        })
+      }
+
+      if (filters.salaryRange) {
+        const [min, max] = filters.salaryRange
+        filteredCandidates = filteredCandidates.filter(
+          (candidate) => candidate.compensation.min <= max && candidate.compensation.max >= min,
         )
-      : [...mockCandidates]
+      }
 
-    // Apply location filter
-    if (filters.location) {
-      filtered = filtered.filter((candidate) => candidate.location === filters.location)
-    }
+      if (filters.skills && filters.skills.length > 0) {
+        filteredCandidates = filteredCandidates.filter((candidate) =>
+          filters.skills!.some((skill) => candidate.skills.includes(skill)),
+        )
+      }
 
-    // Apply experience filter
-    if (filters.experience) {
-      filtered = filtered.filter((candidate) => {
-        const years = Number.parseInt(candidate.experience.split(" ")[0])
-        switch (filters.experience) {
-          case "0-2 years":
-            return years <= 2
-          case "3-5 years":
-            return years >= 3 && years <= 5
-          case "6-8 years":
-            return years >= 6 && years <= 8
-          case "8+ years":
-            return years >= 8
-          default:
-            return true
-        }
-      })
-    }
-
-    // Apply salary filter
-    if (filters.salaryRange) {
-      const [min, max] = filters.salaryRange
-      filtered = filtered.filter((candidate) => candidate.compensation.min <= max && candidate.compensation.max >= min)
-    }
-
-    // Apply skills filter
-    if (filters.skills && filters.skills.length > 0) {
-      filtered = filtered.filter((candidate) => filters.skills!.some((skill) => candidate.skills.includes(skill)))
-    }
-
-    const pageSize = 10
-    const start = (page - 1) * pageSize
-    const end = start + pageSize
-
-    return {
-      candidates: filtered.slice(start, end),
-      hasMore: end < filtered.length,
+      return {
+        candidates: filteredCandidates,
+        hasMore: false, // For now, we don't implement pagination
+      }
+    } catch (error) {
+      console.error("Search candidates failed:", error)
+      throw new Error("Failed to search candidates. Please try again.")
     }
   },
 
-  getProfile: async (username: string): Promise<Candidate> => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
-    const candidate = mockCandidates.find((c) => c.name.toLowerCase().replace(" ", "") === username.toLowerCase())
-
-    if (!candidate) {
-      throw new Error("Candidate not found")
+  getProfile: async (identifier: string): Promise<Candidate> => {
+    try {
+      const response = await getProfile(identifier)
+      return transformTorreProfile(response)
+    } catch (error) {
+      console.error("Get profile failed:", error)
+      throw new Error(`Failed to load profile for ${identifier}`)
     }
-
-    return candidate
   },
 }
