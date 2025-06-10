@@ -22,49 +22,39 @@ export default function CandidateMessagePage() {
   } = useQuery({
     queryKey: ["candidate-by-id", candidateId],
     queryFn: async () => {
-      // Try to get candidate from Torre API
-      try {
-        // candidatesApi needs to be defined.  Assuming it's available elsewhere.
-        // return await candidatesApi.getProfile(candidateId)
-        throw new Error("Torre API not implemented") // Removing the call to the API since it's not defined
-      } catch (error) {
-        // Fallback to mock data for demo
-        const mockCandidates = [
-          {
-            id: "1",
-            name: "Sarah Chen",
-            headline: "Senior Full Stack Developer",
-            avatar: "/placeholder.svg?height=80&width=80",
-            skills: ["React", "Node.js", "TypeScript", "Python", "AWS"],
-            experience: "8 years",
-            bio: "Experienced developer passionate about building scalable applications.",
-          },
-          {
-            id: "2",
-            name: "Marcus Johnson",
-            headline: "DevOps Engineer & Cloud Architect",
-            avatar: "/placeholder.svg?height=80&width=80",
-            skills: ["Kubernetes", "Docker", "Terraform", "AWS", "CI/CD"],
-            experience: "10 years",
-            bio: "Cloud enthusiast with a knack for automation and infrastructure.",
-          },
-          {
-            id: "3",
-            name: "Elena Rodriguez",
-            headline: "Product Designer & UX Researcher",
-            avatar: "/placeholder.svg?height=80&width=80",
-            skills: ["Figma", "User Research", "Prototyping", "Design Systems", "A/B Testing"],
-            experience: "6 years",
-            bio: "User-centered designer focused on creating intuitive and engaging experiences.",
-          },
-        ]
+      // Mock function to get candidate by ID
+      const mockCandidates = [
+        {
+          id: "1",
+          name: "Sarah Chen",
+          headline: "Senior Full Stack Developer",
+          avatar: "/placeholder.svg?height=80&width=80",
+          skills: ["React", "Node.js", "TypeScript", "Python", "AWS"],
+          experience: "8 years",
+        },
+        {
+          id: "2",
+          name: "Marcus Johnson",
+          headline: "DevOps Engineer & Cloud Architect",
+          avatar: "/placeholder.svg?height=80&width=80",
+          skills: ["Kubernetes", "Docker", "Terraform", "AWS", "CI/CD"],
+          experience: "10 years",
+        },
+        {
+          id: "3",
+          name: "Elena Rodriguez",
+          headline: "Product Designer & UX Researcher",
+          avatar: "/placeholder.svg?height=80&width=80",
+          skills: ["Figma", "User Research", "Prototyping", "Design Systems", "A/B Testing"],
+          experience: "6 years",
+        },
+      ]
 
-        const candidate = mockCandidates.find((c) => c.id === candidateId)
-        if (!candidate) {
-          throw new Error("Candidate not found")
-        }
-        return candidate
+      const candidate = mockCandidates.find((c) => c.id === candidateId)
+      if (!candidate) {
+        throw new Error("Candidate not found")
       }
+      return candidate
     },
   })
 

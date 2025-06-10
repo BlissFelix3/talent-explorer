@@ -1,5 +1,4 @@
 import type { Candidate } from "@/lib/stores/shortlist-store"
-import { searchPeople } from "./torre"
 
 export interface JobRecommendation {
   id: string
@@ -26,7 +25,7 @@ export interface LearningRecommendation {
   url: string
 }
 
-// Mock job and learning recommendations (these would come from other APIs)
+// Mock recommendations data
 const mockJobRecommendations: JobRecommendation[] = [
   {
     id: "1",
@@ -73,47 +72,33 @@ const mockLearningRecommendations: LearningRecommendation[] = [
 
 export const recommendationsApi = {
   getCandidateRecommendations: async (): Promise<Candidate[]> => {
-    try {
-      // Get recommended candidates from Torre based on popular skills
-      const response = await searchPeople({
-        query: "React developer",
-        limit: 6,
-      })
+    await new Promise((resolve) => setTimeout(resolve, 800))
 
-      // Transform Torre results to our Candidate interface
-      const candidates: Candidate[] = response.results.map((result) => {
-        const experienceYears = Math.floor(Math.random() * 8) + 3
-        const skills = ["React", "JavaScript", "TypeScript", "Node.js", "CSS"].slice(
-          0,
-          Math.floor(Math.random() * 3) + 3,
-        )
-
-        return {
-          id: result.ggId,
-          name: result.name,
-          headline: result.professionalHeadline || "Software Developer",
-          avatar: result.imageUrl || "/placeholder.svg?height=80&width=80",
-          skills: skills,
-          strengths: ["Problem Solving", "Leadership", "Innovation", "Communication"],
-          compensation: {
-            min: 100000 + Math.floor(Math.random() * 50000),
-            max: 130000 + Math.floor(Math.random() * 50000),
-            currency: "USD",
-          },
-          location: "Remote",
-          experience: `${experienceYears} years`,
-          username: result.username,
-          publicId: result.publicId,
-          verified: result.verified,
-        }
-      })
-
-      return candidates.slice(0, 3) // Return top 3 recommendations
-    } catch (error) {
-      console.error("Failed to get candidate recommendations:", error)
-      // Return empty array on error
-      return []
-    }
+    // Return a subset of candidates as recommendations
+    return [
+      {
+        id: "rec-1",
+        name: "Alex Chen",
+        headline: "Senior React Developer",
+        avatar: "/placeholder.svg?height=80&width=80",
+        skills: ["React", "TypeScript", "Node.js", "GraphQL"],
+        strengths: ["Problem Solving", "Leadership", "Innovation", "Communication"],
+        compensation: { min: 130000, max: 160000, currency: "USD" },
+        location: "San Francisco, CA",
+        experience: "6 years",
+      },
+      {
+        id: "rec-2",
+        name: "Sarah Kim",
+        headline: "Full Stack Engineer",
+        avatar: "/placeholder.svg?height=80&width=80",
+        skills: ["Python", "React", "AWS", "PostgreSQL"],
+        strengths: ["Analytical Thinking", "Teamwork", "Adaptability", "Mentoring"],
+        compensation: { min: 120000, max: 150000, currency: "USD" },
+        location: "Seattle, WA",
+        experience: "5 years",
+      },
+    ]
   },
 
   getJobRecommendations: async (): Promise<JobRecommendation[]> => {

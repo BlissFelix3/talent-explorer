@@ -16,21 +16,6 @@ export interface Candidate {
   location: string
   experience: string
   note?: string
-  username?: string
-  publicId?: string
-  bio?: string
-  completion?: number
-  verified?: boolean
-  links?: Array<{
-    id: string
-    name: string
-    address: string
-  }>
-  languages?: Array<{
-    language: string
-    fluency: string
-  }>
-  torreData?: any // Store original Torre data for detailed views
 }
 
 interface ShortlistState {

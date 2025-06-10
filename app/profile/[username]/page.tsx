@@ -28,7 +28,6 @@ export default function ProfilePage() {
   } = useQuery({
     queryKey: ["candidate", username],
     queryFn: () => candidatesApi.getProfile(username),
-    retry: 1, // Only retry once for Torre API calls
   })
 
   const isShortlisted = candidate && candidates.some((c) => c.id === candidate.id)
