@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_API_BASE = "http://localhost:8888";
+const BACKEND_API_BASE =
+  "https://torre-talent-explorer-production.up.railway.app";
 
 export async function POST(request: NextRequest) {
   try {
