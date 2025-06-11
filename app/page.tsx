@@ -71,24 +71,18 @@ export default function HomePage() {
           </div>
 
           <div className="mt-12 rounded-xl border bg-muted/50 p-2 max-w-5xl w-full shadow-xl">
-            <video
-              className="rounded-lg w-full h-auto"
-              controls
-              autoPlay
-              muted
-              loop
-              preload="metadata"
-            >
-              <source src="/demo-video.mp4" type="video/mp4" />
-              <source src="/demo-video.webm" type="video/webm" />
-              {/* Fallback for browsers that don't support video */}
-              <img
-                src="/placeholder.svg?height=500&width=1000"
-                alt="TalentScope Dashboard"
-                className="rounded-lg w-full h-auto"
-              />
-              Your browser does not support the video tag.
-            </video>
+            <div className="w-full">
+              <div className="relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg">
+                <iframe
+                  src="https://www.youtube.com/embed/5MKSSMlG-N8?autoplay=1&mute=1&loop=1&playlist=5MKSSMlG-N8"
+                  title="TalentScope Demo"
+                  className="absolute top-0 left-0 w-full h-full"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
