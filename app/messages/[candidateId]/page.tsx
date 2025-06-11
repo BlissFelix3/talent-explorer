@@ -1,62 +1,59 @@
-"use client"
+"use client";
 
-import { useParams } from "next/navigation"
-import { useQuery } from "@tanstack/react-query"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { AuthGuard } from "@/components/auth-guard"
-import { Navbar } from "@/components/navbar"
-import { CandidateChat } from "@/components/candidate-chat"
-import { InterviewScheduler } from "@/components/interview-scheduler"
-import { ArrowLeft, CalendarDays } from "lucide-react"
-import Link from "next/link"
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AuthGuard } from "@/components/auth-guard";
+import { Navbar } from "@/components/navbar";
+import { CandidateChat } from "@/components/candidate-chat";
+import { MeetingScheduler } from "@/components/meeting-scheduler";
+import { ArrowLeft, CalendarDays } from "lucide-react";
+import Link from "next/link";
+import { getProfile } from "@/lib/api/torre";
 
 export default function CandidateMessagePage() {
-  const params = useParams()
-  const candidateId = params.candidateId as string
+  const params = useParams();
+  const candidateId = params.candidateId as string;
 
   const {
     data: candidate,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["candidate-by-id", candidateId],
+    queryKey: ["torre-profile", candidateId],
     queryFn: async () => {
-      // Mock function to get candidate by ID
-      const mockCandidates = [
-        {
-          id: "1",
-          name: "Sarah Chen",
-          headline: "Senior Full Stack Developer",
-          avatar: "/placeholder.svg?height=80&width=80",
-          skills: ["React", "Node.js", "TypeScript", "Python", "AWS"],
-          experience: "8 years",
-        },
-        {
-          id: "2",
-          name: "Marcus Johnson",
-          headline: "DevOps Engineer & Cloud Architect",
-          avatar: "/placeholder.svg?height=80&width=80",
-          skills: ["Kubernetes", "Docker", "Terraform", "AWS", "CI/CD"],
-          experience: "10 years",
-        },
-        {
-          id: "3",
-          name: "Elena Rodriguez",
-          headline: "Product Designer & UX Researcher",
-          avatar: "/placeholder.svg?height=80&width=80",
-          skills: ["Figma", "User Research", "Prototyping", "Design Systems", "A/B Testing"],
-          experience: "6 years",
-        },
-      ]
+      try {
+        // Get Torre profile data
+        const profile = await getProfile(candidateId);
 
-      const candidate = mockCandidates.find((c) => c.id === candidateId)
-      if (!candidate) {
-        throw new Error("Candidate not found")
+        // Transform Torre data to chat format matching TalentedUser interface
+        return {
+          ggId: profile.person.ggId,
+          ardaId: profile.person.ardaId,
+          username: candidateId, // This is the Torre username
+          name: profile.person.name,
+          professionalHeadline: profile.person.professionalHeadline,
+          picture: profile.person.picture,
+          pictureThumbnail: profile.person.pictureThumbnail,
+          skills: profile.processed.topSkills,
+          experience: `${profile.processed.experienceYears} years`,
+          location: profile.person.location,
+          completion: profile.person.completion,
+          verified: profile.person.verified,
+          strengths: profile.strengths.map((s) => s.name),
+          totalStrength: profile.strengths.length,
+          pageRank: 0, // Default since individual profiles don't have pageRank
+          weight: 0,
+          publicId: profile.person.publicId,
+          isSearchable: true,
+        };
+      } catch (error) {
+        console.error("Error fetching Torre profile:", error);
+        throw new Error("Failed to fetch candidate profile from Torre");
       }
-      return candidate
     },
-  })
+  });
 
   if (isLoading) {
     return (
@@ -73,7 +70,7 @@ export default function CandidateMessagePage() {
           </main>
         </div>
       </AuthGuard>
-    )
+    );
   }
 
   if (error || !candidate) {
@@ -85,8 +82,12 @@ export default function CandidateMessagePage() {
             <div className="max-w-4xl mx-auto">
               <Card>
                 <CardContent className="p-12 text-center">
-                  <h3 className="text-lg font-semibold mb-2">Candidate not found</h3>
-                  <p className="text-muted-foreground">The candidate you're looking for doesn't exist.</p>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Candidate not found
+                  </h3>
+                  <p className="text-muted-foreground">
+                    The candidate you're looking for doesn't exist.
+                  </p>
                   <Button asChild className="mt-4">
                     <Link href="/messages">Back to Messages</Link>
                   </Button>
@@ -96,7 +97,7 @@ export default function CandidateMessagePage() {
           </main>
         </div>
       </AuthGuard>
-    )
+    );
   }
 
   return (
@@ -114,11 +115,13 @@ export default function CandidateMessagePage() {
                 </Button>
                 <div>
                   <h1 className="text-2xl font-bold">{candidate.name}</h1>
-                  <p className="text-muted-foreground">{candidate.headline}</p>
+                  <p className="text-muted-foreground">
+                    {candidate.professionalHeadline}
+                  </p>
                 </div>
               </div>
 
-              <InterviewScheduler candidate={candidate} />
+              <MeetingScheduler user={candidate} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -134,7 +137,9 @@ export default function CandidateMessagePage() {
                   <CardContent className="space-y-4">
                     <div>
                       <h4 className="font-medium mb-2">Experience</h4>
-                      <p className="text-sm text-muted-foreground">{candidate.experience}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {candidate.experience}
+                      </p>
                     </div>
 
                     <div>
@@ -152,7 +157,11 @@ export default function CandidateMessagePage() {
                     </div>
 
                     <Button asChild variant="outline" className="w-full">
-                      <Link href={`/profile/${candidate.name.toLowerCase().replace(" ", "")}`}>View Full Profile</Link>
+                      <Link
+                        href={`/profile/${candidate.username || candidateId}`}
+                      >
+                        View Full Profile
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -165,7 +174,7 @@ export default function CandidateMessagePage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <InterviewScheduler candidate={candidate} />
+                    <MeetingScheduler user={candidate} />
                     <Button variant="outline" className="w-full">
                       Add to Shortlist
                     </Button>
@@ -180,5 +189,5 @@ export default function CandidateMessagePage() {
         </main>
       </div>
     </AuthGuard>
-  )
+  );
 }

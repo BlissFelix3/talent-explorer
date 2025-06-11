@@ -1,22 +1,23 @@
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface User {
-  id: string
-  name: string
-  email: string
-  avatar?: string
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  torreUsername: string;
+  profilePicture?: string | null;
 }
 
 interface AuthState {
-  user: User | null
-  accessToken: string | null
-  refreshToken: string | null
-  isAuthenticated: boolean
-  login: (user: User, accessToken: string, refreshToken: string) => void
-  logout: () => void
-  setUser: (user: User) => void
-  setAccessToken: (token: string) => void
+  user: User | null;
+  accessToken: string | null;
+  isAuthenticated: boolean;
+  login: (user: User, accessToken: string) => void;
+  logout: () => void;
+  setUser: (user: User) => void;
+  setAccessToken: (token: string) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -24,20 +25,17 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       accessToken: null,
-      refreshToken: null,
       isAuthenticated: false,
-      login: (user, accessToken, refreshToken) =>
+      login: (user, accessToken) =>
         set({
           user,
           accessToken,
-          refreshToken,
           isAuthenticated: true,
         }),
       logout: () =>
         set({
           user: null,
           accessToken: null,
-          refreshToken: null,
           isAuthenticated: false,
         }),
       setUser: (user) => set({ user }),
@@ -46,8 +44,9 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage",
       partialize: (state) => ({
-        refreshToken: state.refreshToken,
+        user: state.user,
+        accessToken: state.accessToken,
       }),
-    },
-  ),
-)
+    }
+  )
+);

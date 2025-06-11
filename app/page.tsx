@@ -1,27 +1,35 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/lib/stores/auth-store"
-import { Button } from "@/components/ui/button"
-import { Navbar } from "@/components/navbar"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
-import { Search, Users, TrendingUp, BarChart2, Zap, Shield, Star } from "lucide-react"
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/lib/stores/auth-store";
+import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/navbar";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import {
+  Search,
+  Users,
+  TrendingUp,
+  BarChart2,
+  Zap,
+  Shield,
+  Star,
+} from "lucide-react";
 
 export default function HomePage() {
-  const { isAuthenticated } = useAuthStore()
-  const router = useRouter()
+  const { isAuthenticated } = useAuthStore();
+  const router = useRouter();
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/search")
+      router.push("/search");
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, router]);
 
   if (isAuthenticated) {
-    return null
+    return null;
   }
 
   return (
@@ -36,15 +44,16 @@ export default function HomePage() {
               ✨ Introducing TalentScope 2.0
             </div>
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
-              Discover and hire{" "}
+              Connect with{" "}
               <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                exceptional
+                top talent
               </span>{" "}
-              talent
+              worldwide
             </h1>
             <p className="mx-auto max-w-[700px] text-muted-foreground text-lg md:text-xl">
-              TalentScope supercharges your recruitment workflow with AI-powered tools that adapt to your hiring
-              process. Find, evaluate, and hire the perfect candidates faster than ever before.
+              TalentScope helps you discover and connect with the world's most
+              talented professionals. Search, explore, and schedule meetings
+              with top-ranked talent from around the globe.
             </p>
           </div>
 
@@ -76,20 +85,22 @@ export default function HomePage() {
         <div className="container">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div className="space-y-2">
-              <p className="text-3xl md:text-4xl font-bold text-primary">10k+</p>
+              <p className="text-3xl md:text-4xl font-bold text-primary">
+                10k+
+              </p>
               <p className="text-muted-foreground">Active Users</p>
             </div>
             <div className="space-y-2">
-              <p className="text-3xl md:text-4xl font-bold text-primary">2M+</p>
-              <p className="text-muted-foreground">Talent Profiles</p>
+              <p className="text-3xl md:text-4xl font-bold text-primary">1M+</p>
+              <p className="text-muted-foreground">Talented Professionals</p>
             </div>
             <div className="space-y-2">
-              <p className="text-3xl md:text-4xl font-bold text-primary">85%</p>
-              <p className="text-muted-foreground">Hiring Success</p>
+              <p className="text-3xl md:text-4xl font-bold text-primary">95%</p>
+              <p className="text-muted-foreground">Connection Success</p>
             </div>
             <div className="space-y-2">
-              <p className="text-3xl md:text-4xl font-bold text-primary">50%</p>
-              <p className="text-muted-foreground">Time Saved</p>
+              <p className="text-3xl md:text-4xl font-bold text-primary">60%</p>
+              <p className="text-muted-foreground">Faster Discovery</p>
             </div>
           </div>
         </div>
@@ -102,9 +113,12 @@ export default function HomePage() {
             <Badge variant="outline" className="mb-4">
               Features
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Everything you need to find top talent</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Everything you need to connect with top talent
+            </h2>
             <p className="text-muted-foreground text-lg">
-              Our comprehensive suite of tools helps you streamline your recruitment process from start to finish.
+              Our comprehensive platform helps you discover, explore, and
+              connect with the world's most talented professionals.
             </p>
           </div>
 
@@ -114,9 +128,10 @@ export default function HomePage() {
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
                   <Search className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">AI-Powered Search</h3>
+                <h3 className="text-xl font-bold mb-2">AI-Powered Discovery</h3>
                 <p className="text-muted-foreground">
-                  Find the perfect candidates with our intelligent search algorithm that understands context and intent.
+                  Discover top talent with our intelligent search algorithm that
+                  finds the most relevant professionals based on your criteria.
                 </p>
               </CardContent>
             </Card>
@@ -126,10 +141,12 @@ export default function HomePage() {
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Talent Genome</h3>
+                <h3 className="text-xl font-bold mb-2">
+                  Comprehensive Profiles
+                </h3>
                 <p className="text-muted-foreground">
-                  Get deep insights into candidates' skills, experience, and potential with our comprehensive talent
-                  profiles.
+                  Explore detailed profiles showcasing skills, experience, and
+                  achievements of talented professionals worldwide.
                 </p>
               </CardContent>
             </Card>
@@ -141,7 +158,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Market Trends</h3>
                 <p className="text-muted-foreground">
-                  Stay ahead of the competition with real-time insights into talent market trends and compensation data.
+                  Stay ahead of the competition with real-time insights into
+                  talent market trends and compensation data.
                 </p>
               </CardContent>
             </Card>
@@ -153,7 +171,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Advanced Analytics</h3>
                 <p className="text-muted-foreground">
-                  Make data-driven decisions with powerful analytics and visualizations of your recruitment pipeline.
+                  Make data-driven decisions with powerful analytics and
+                  visualizations of your recruitment pipeline.
                 </p>
               </CardContent>
             </Card>
@@ -163,9 +182,10 @@ export default function HomePage() {
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
                   <Zap className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Smart Recommendations</h3>
+                <h3 className="text-xl font-bold mb-2">PageRank Scoring</h3>
                 <p className="text-muted-foreground">
-                  Receive personalized candidate recommendations based on your hiring patterns and requirements.
+                  Discover professionals ranked by their expertise and
+                  achievements, helping you identify top talent quickly.
                 </p>
               </CardContent>
             </Card>
@@ -177,7 +197,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Secure Collaboration</h3>
                 <p className="text-muted-foreground">
-                  Collaborate securely with your team on candidate evaluations, notes, and hiring decisions.
+                  Collaborate securely with your team on candidate evaluations,
+                  notes, and hiring decisions.
                 </p>
               </CardContent>
             </Card>
@@ -192,9 +213,12 @@ export default function HomePage() {
             <Badge variant="outline" className="mb-4">
               How It Works
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Streamlined recruitment in 4 simple steps</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Streamlined recruitment in 4 simple steps
+            </h2>
             <p className="text-muted-foreground text-lg">
-              Our platform makes finding and hiring top talent easier than ever before.
+              Our platform makes finding and hiring top talent easier than ever
+              before.
             </p>
           </div>
 
@@ -205,7 +229,8 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-bold mb-2">Create Your Profile</h3>
               <p className="text-muted-foreground">
-                Set up your company profile and define your hiring needs and preferences.
+                Set up your company profile and define your hiring needs and
+                preferences.
               </p>
             </div>
 
@@ -215,7 +240,8 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-bold mb-2">Discover Candidates</h3>
               <p className="text-muted-foreground">
-                Use our AI-powered search to find candidates that match your requirements.
+                Use our AI-powered search to find candidates that match your
+                requirements.
               </p>
             </div>
 
@@ -224,16 +250,21 @@ export default function HomePage() {
                 <span className="text-2xl font-bold text-primary">3</span>
               </div>
               <h3 className="text-xl font-bold mb-2">Evaluate & Compare</h3>
-              <p className="text-muted-foreground">Review detailed profiles and compare candidates side by side.</p>
+              <p className="text-muted-foreground">
+                Review detailed profiles and compare candidates side by side.
+              </p>
             </div>
 
             <div className="text-center">
               <div className="rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold text-primary">4</span>
               </div>
-              <h3 className="text-xl font-bold mb-2">Make Informed Decisions</h3>
+              <h3 className="text-xl font-bold mb-2">
+                Make Informed Decisions
+              </h3>
               <p className="text-muted-foreground">
-                Use data-driven insights to select the best candidates for your team.
+                Use data-driven insights to select the best candidates for your
+                team.
               </p>
             </div>
           </div>
@@ -247,9 +278,12 @@ export default function HomePage() {
             <Badge variant="outline" className="mb-4">
               Testimonials
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Trusted by recruiters worldwide</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Trusted by recruiters worldwide
+            </h2>
             <p className="text-muted-foreground text-lg">
-              See what our customers have to say about their experience with TalentScope.
+              See what our customers have to say about their experience with
+              TalentScope.
             </p>
           </div>
 
@@ -264,8 +298,9 @@ export default function HomePage() {
                   <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
                 </div>
                 <p className="text-muted-foreground mb-4">
-                  "TalentScope has revolutionized our hiring process. We've reduced our time-to-hire by 40% and found
-                  candidates that are a perfect fit for our culture."
+                  "TalentScope has revolutionized our hiring process. We've
+                  reduced our time-to-hire by 40% and found candidates that are
+                  a perfect fit for our culture."
                 </p>
                 <div className="flex items-center">
                   <div className="rounded-full bg-muted w-10 h-10 flex items-center justify-center mr-3">
@@ -273,7 +308,9 @@ export default function HomePage() {
                   </div>
                   <div>
                     <p className="font-semibold">Jane Doe</p>
-                    <p className="text-sm text-muted-foreground">HR Director, Tech Co.</p>
+                    <p className="text-sm text-muted-foreground">
+                      HR Director, Tech Co.
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -289,8 +326,9 @@ export default function HomePage() {
                   <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
                 </div>
                 <p className="text-muted-foreground mb-4">
-                  "The talent genome feature is incredible. It gives us insights into candidates that we couldn't get
-                  anywhere else. It's like having an AI recruiter on your team."
+                  "The talent genome feature is incredible. It gives us insights
+                  into candidates that we couldn't get anywhere else. It's like
+                  having an AI recruiter on your team."
                 </p>
                 <div className="flex items-center">
                   <div className="rounded-full bg-muted w-10 h-10 flex items-center justify-center mr-3">
@@ -298,7 +336,9 @@ export default function HomePage() {
                   </div>
                   <div>
                     <p className="font-semibold">Michael Smith</p>
-                    <p className="text-sm text-muted-foreground">Talent Acquisition, StartupX</p>
+                    <p className="text-sm text-muted-foreground">
+                      Talent Acquisition, StartupX
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -314,8 +354,9 @@ export default function HomePage() {
                   <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
                 </div>
                 <p className="text-muted-foreground mb-4">
-                  "As a small business, we don't have a dedicated HR team. TalentScope has made it possible for us to
-                  compete for top talent with much larger companies."
+                  "As a small business, we don't have a dedicated HR team.
+                  TalentScope has made it possible for us to compete for top
+                  talent with much larger companies."
                 </p>
                 <div className="flex items-center">
                   <div className="rounded-full bg-muted w-10 h-10 flex items-center justify-center mr-3">
@@ -323,7 +364,9 @@ export default function HomePage() {
                   </div>
                   <div>
                     <p className="font-semibold">Amanda Lee</p>
-                    <p className="text-sm text-muted-foreground">Founder, GrowthLab</p>
+                    <p className="text-sm text-muted-foreground">
+                      Founder, GrowthLab
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -336,9 +379,12 @@ export default function HomePage() {
       <section className="py-20">
         <div className="container">
           <div className="max-w-4xl mx-auto bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-8 md:p-12 text-white text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to transform your hiring process?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Ready to transform your hiring process?
+            </h2>
             <p className="text-lg mb-8 text-white/90">
-              Join thousands of companies that are already using TalentScope to find and hire exceptional talent.
+              Join thousands of companies that are already using TalentScope to
+              find and hire exceptional talent.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" variant="secondary" asChild>
@@ -369,7 +415,8 @@ export default function HomePage() {
                 <span className="font-bold">TalentScope</span>
               </Link>
               <p className="text-muted-foreground mb-4">
-                AI-powered recruitment platform that helps you find and hire exceptional talent faster than ever before.
+                AI-powered recruitment platform that helps you find and hire
+                exceptional talent faster than ever before.
               </p>
               <div className="flex space-x-4">
                 <Button variant="ghost" size="icon" className="rounded-full">
@@ -431,17 +478,26 @@ export default function HomePage() {
               <h3 className="font-semibold mb-4">Product</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#features" className="text-muted-foreground hover:text-foreground">
+                  <Link
+                    href="#features"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
                     Features
                   </Link>
                 </li>
                 <li>
-                  <Link href="/integrations" className="text-muted-foreground hover:text-foreground">
+                  <Link
+                    href="/integrations"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
                     Integrations
                   </Link>
                 </li>
                 <li>
-                  <Link href="/changelog" className="text-muted-foreground hover:text-foreground">
+                  <Link
+                    href="/changelog"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
                     Changelog
                   </Link>
                 </li>
@@ -451,22 +507,34 @@ export default function HomePage() {
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/blog" className="text-muted-foreground hover:text-foreground">
+                  <Link
+                    href="/blog"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
                     Blog
                   </Link>
                 </li>
                 <li>
-                  <Link href="/guides" className="text-muted-foreground hover:text-foreground">
+                  <Link
+                    href="/guides"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
                     Guides
                   </Link>
                 </li>
                 <li>
-                  <Link href="/webinars" className="text-muted-foreground hover:text-foreground">
+                  <Link
+                    href="/webinars"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
                     Webinars
                   </Link>
                 </li>
                 <li>
-                  <Link href="/help" className="text-muted-foreground hover:text-foreground">
+                  <Link
+                    href="/help"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
                     Help Center
                   </Link>
                 </li>
@@ -474,10 +542,12 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-muted-foreground/20 text-center text-muted-foreground">
-            <p>© {new Date().getFullYear()} TalentScope. All rights reserved.</p>
+            <p>
+              © {new Date().getFullYear()} TalentScope. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }
