@@ -65,6 +65,17 @@ export function MeetingScheduler({ user }: MeetingSchedulerProps) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
 
+  // Reset form when dialog opens
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      setSelectedDate(undefined);
+      setSelectedTime("");
+      setMeetingType("video");
+      setNotes("");
+    }
+  };
+
   const handleScheduleMeeting = () => {
     if (!selectedDate || !selectedTime) {
       toast({
@@ -95,14 +106,14 @@ export function MeetingScheduler({ user }: MeetingSchedulerProps) {
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className="w-full">
           <CalendarIcon className="mr-2 h-4 w-4" />
           Schedule Meeting
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Schedule Meeting with {user.name}</DialogTitle>
           <DialogDescription>
@@ -111,20 +122,27 @@ export function MeetingScheduler({ user }: MeetingSchedulerProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2">
           {/* Calendar Selection */}
           <div className="space-y-4">
             <div>
               <Label className="text-base font-semibold">Select Date</Label>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                disabled={(date) =>
-                  date < new Date() || date < new Date("1900-01-01")
-                }
-                className="rounded-md border mt-2"
-              />
+              <div className="mt-2 flex justify-center">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => setSelectedDate(date)}
+                  disabled={(date) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    return date < today;
+                  }}
+                  className="rounded-md border p-3 bg-card"
+                  initialFocus
+                  defaultMonth={new Date()}
+                  numberOfMonths={1}
+                />
+              </div>
             </div>
           </div>
 
@@ -133,12 +151,16 @@ export function MeetingScheduler({ user }: MeetingSchedulerProps) {
             <div>
               <Label className="text-base font-semibold">Select Time</Label>
               <Select value={selectedTime} onValueChange={setSelectedTime}>
-                <SelectTrigger className="mt-2">
+                <SelectTrigger className="mt-2 h-11">
                   <SelectValue placeholder="Choose a time slot" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-60 overflow-y-auto">
                   {timeSlots.map((time) => (
-                    <SelectItem key={time} value={time}>
+                    <SelectItem
+                      key={time}
+                      value={time}
+                      className="cursor-pointer"
+                    >
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4" />
                         {time}
@@ -153,12 +175,16 @@ export function MeetingScheduler({ user }: MeetingSchedulerProps) {
             <div>
               <Label className="text-base font-semibold">Meeting Type</Label>
               <Select value={meetingType} onValueChange={setMeetingType}>
-                <SelectTrigger className="mt-2">
+                <SelectTrigger className="mt-2 h-11">
                   <SelectValue placeholder="Choose meeting type" />
                 </SelectTrigger>
                 <SelectContent>
                   {meetingTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
+                    <SelectItem
+                      key={type.value}
+                      value={type.value}
+                      className="cursor-pointer"
+                    >
                       <div className="flex items-center gap-2">
                         <type.icon className="h-4 w-4" />
                         {type.label}
