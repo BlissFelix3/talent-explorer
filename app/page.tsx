@@ -71,11 +71,24 @@ export default function HomePage() {
           </div>
 
           <div className="mt-12 rounded-xl border bg-muted/50 p-2 max-w-5xl w-full shadow-xl">
-            <img
-              src="/placeholder.svg?height=500&width=1000"
-              alt="TalentScope Dashboard"
+            <video
               className="rounded-lg w-full h-auto"
-            />
+              controls
+              autoPlay
+              muted
+              loop
+              preload="metadata"
+            >
+              <source src="/demo-video.mp4" type="video/mp4" />
+              <source src="/demo-video.webm" type="video/webm" />
+              {/* Fallback for browsers that don't support video */}
+              <img
+                src="/placeholder.svg?height=500&width=1000"
+                alt="TalentScope Dashboard"
+                className="rounded-lg w-full h-auto"
+              />
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
       </section>
